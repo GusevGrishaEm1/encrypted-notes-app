@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes App</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .notes {
+            display: flex;
+            height: 100%;
+        }
+
+        .notes * {
+            font-family: sans-serif;
+        }
+
+        .notes__sidebar {
+            border-right: 2px solid #dddddd;
+            flex-shrink: 0;
+            overflow-y: auto;
+            padding: 1em;
+            width: 300px;
+        }
+
+        .notes__add {
+            background: #009578;
+            border: none;
+            border-radius: 7px;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 1.25em;
+            font-weight: bold;
+            margin-bottom: 1em;
+            padding: 0.75em 0;
+            width: 100%;
+        }
+
+        .notes__add:hover {
+            background: #00af8c;
+        }
+
+        .notes__save {
+            background: #009578;
+            border: none;
+            border-radius: 7px;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 1.25em;
+            font-weight: bold;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            padding: 0.75em 0;
+            width: 100%;
+        }
+
+        .notes__save:hover {
+            background: #00af8c;
+        }
+
+        .notes__list-item {
+            cursor: pointer;
+        }
+
+        .notes__list-item--selected {
+            background: #eeeeee;
+            border-radius: 7px;
+            font-weight: bold;
+        }
+
+        .notes__small-title,
+        .notes__small-updated {
+            padding: 10px;
+        }
+
+        .notes__small-title {
+            font-size: 1.2em;
+        }
+
+        .notes__small-body {
+            padding: 0 10px;
+        }
+
+        .notes__small-updated {
+            color: #aaaaaa;
+            font-style: italic;
+            text-align: right;
+        }
+
+        .notes__preview {
+            display: flex;
+            flex-direction: column;
+            padding: 2em 3em;
+            flex-grow: 1;
+        }
+
+        .notes__title,
+        .notes__body {
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .notes__title {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .notes__body {
+            flex-grow: 1;
+            font-size: 1.2em;
+            line-height: 1.5;
+            margin-top: 2em;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+<div class="notes" id="app" ></div>
+<div id="password" hidden>password</div>
+<div id="notes" hidden>notes</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+<script type="text/javascript">
+    class App {
+        constructor(root) {
+            this.root = root;
+            this.userPassword = new UserPassword();
+            this.notes = [];
+            this.activeNote = null;
+            this.view = new NotesView(root, this._handlers());
+            this._refreshNotes();
+        }
+
+        _refreshNotes() {
+            const notes = NotesAPI.getAllNotes(this.userPassword.password);
+            console.log(notes);
+            this._setNotes(notes);
+
+            if (notes.length > 0) {
+                this._setActiveNote(notes[0]);
+            }
+        }
+
+        _setNotes(notes) {
+            this.notes = notes;
+            this.view.updateNoteList(notes);
+            this.view.updateNotePreviewVisibility(notes.length > 0);
+        }
+
+        _setActiveNote(note) {
+            this.activeNote = note;
+            this.view.updateActiveNote(note);
+        }
+
+        _handlers() {
+            return {
+                onNoteSelect: noteId => {
+                    const selectedNote = this.notes.find(note => note.id == noteId);
+                    this._setActiveNote(selectedNote);
+                },
+                onNoteAdd: () => {
+                    const saveButton = this.root.querySelector(".notes__save");
+                    saveButton.hidden = false;
+                    const newNote = {
+                        title: "New Note",
+                        body: "Take note..."
+                    };
+
+                    NotesAPI.saveNote(newNote, this.userPassword.password);
+                    this._refreshNotes();
+                },
+                onNoteEdit: (title, body) => {
+                    const saveButton = this.root.querySelector(".notes__save");
+                    saveButton.hidden = false;
+                    NotesAPI.saveNote({
+                            id: this.activeNote.id,
+                            title,
+                            body
+                        },
+                        this.userPassword.password
+                    );
+                    this._refreshNotes();
+                },
+                onNoteDelete: noteId => {
+                    const saveButton = this.root.querySelector(".notes__save");
+                    saveButton.hidden = false;
+                    NotesAPI.deleteNote(noteId, this.userPassword.password);
+                    this._refreshNotes();
+                },
+                onSave: async () => {
+                    const opts = {
+                        suggestedName: 'notebook',
+                        types: [{
+                            description: 'notebook',
+                            accept: {'html/plain': ['.html']},
+                        }],
+                    };
+                    const fileHandle = await window.showSaveFilePicker(opts);
+                    FileSaveAPI.save(fileHandle);
+                }
+            };
+        }
+    }
+
+    class NotesAPI {
+        static getAllNotes(userPassword) {
+            const data = document.getElementById("notes").textContent;
+            if(data != 'notes') {
+                const array = JSON.parse(document.getElementById("notes").textContent || "[]");
+                for (let i = 0; i < array.length; i++) {
+                    const bytes = CryptoJS.AES.decrypt(array[i].body, userPassword);
+                    array[i].body = bytes.toString(CryptoJS.enc.Utf8);
+                }
+                const resultArray = [];
+                for (let i = 0; i < array.length; i++) {
+                    const hash = sha256.create();
+                    hash.update(array[i].body);
+                    if (array[i].hashValue === hash.hex()) {
+                        resultArray.push(array[i]);
+                    }
+                }
+                return resultArray.sort((a, b) => {
+                    return new Date(a.updated) > new Date(b.updated) ? -1 : 1;
+                });
+            }
+            else {
+                return [];
+            }
+        }
+
+        static saveNote(noteToSave, password) {
+            const notes = NotesAPI.getAllNotes(password);
+            const existing = notes.find(note => note.id == noteToSave.id);
+
+            if (existing) {
+                existing.title = noteToSave.title;
+                existing.body = noteToSave.body;
+                existing.updated = new Date().toISOString();
+            } else {
+                noteToSave.id = Math.floor(Math.random() * 1000000);
+                noteToSave.updated = new Date().toISOString();
+                notes.push(noteToSave);
+            }
+            NotesAPI.saveNotes(notes, password);
+        }
+
+        static saveNotes(notes, userPassword) {
+            for (let i = 0; i < notes.length; i++) {
+                const hash = sha256.create();
+                hash.update(notes[i].body);
+                notes[i].hashValue = hash.hex();
+            }
+            for (let i = 0; i < notes.length; i++) {
+                notes[i].body = CryptoJS.AES.encrypt(notes[i].body, userPassword).toString();
+            }
+            document.getElementById("notes").textContent = JSON.stringify(notes);
+        }
+
+        static deleteNote(id, userPassword) {
+            const notes = NotesAPI.getAllNotes(userPassword);
+            const newNotes = notes.filter(note => note.id != id);
+            NotesAPI.saveNotes(newNotes, userPassword);
+        }
+    }
+
+
+    class FileSaveAPI {
+        static save = async function (fileHandle) {
+            const btnSave = document.querySelector(".notes__save");
+            btnSave.hidden = true;
+            const notes = document.querySelector("#app");
+            notes.innerHTML = '';
+            const writable = await fileHandle.createWritable();
+            await writable.write("<!DOCTYPE html> <html lang='en'>" + document.documentElement.innerHTML + "</html>");
+            await writable.close();
+            window.close();
+        }
+    }
+
+    class UserPassword {
+
+        constructor() {
+            this.password = this.getPassword();
+            if (this.password === 'password') {
+                let newPassword = this.createPassword();
+                const hash = sha256.create();
+                hash.update(newPassword);
+                newPassword = hash.hex();
+                this.setPassword(newPassword);
+                this.password = this.getPassword();
+            }
+            this.checkPassword();
+        }
+
+        getPassword = function () {
+            return document.getElementById("password").textContent;
+        }
+
+        setPassword = function (password) {
+            document.getElementById("password").textContent = password;
+        }
+
+        createPassword() {
+            let newPassword = prompt("Create your secret password.", "");
+            if(newPassword === "") {
+                this.createPassword();
+            }
+            return newPassword;
+        }
+
+        checkPassword = function () {
+            let userPassword = prompt("Enter your password.", "");
+            if (userPassword != "") {
+                const hash = sha256.create();
+                hash.update(userPassword);
+                const userPasswordHash = hash.hex();
+                if (this.password != userPasswordHash) {
+                    alert("Wrong password!!!");
+                    this.checkPassword();
+                }
+            } else {
+                alert("Wrong password!!!");
+                this.checkPassword();
+            }
+        }
+
+    }
+
+    class NotesView {
+        constructor(root, {onNoteSelect, onNoteAdd, onNoteEdit, onNoteDelete, onSave} = {}) {
+            this.root = root;
+            this.onNoteSelect = onNoteSelect;
+            this.onNoteAdd = onNoteAdd;
+            this.onNoteEdit = onNoteEdit;
+            this.onNoteDelete = onNoteDelete;
+            this.onSave = onSave;
+            this.root.innerHTML = `
+            <div class="notes__sidebar">
+                <button class="notes__add" type="button">Add Note</button>
+                <div class="notes__list"></div>
+                <button class="notes__save" type="button" hidden>Save as</button>
+            </div>
+            <div class="notes__preview">
+                <input class="notes__title" type="text" placeholder="New Note...">
+                <textarea class="notes__body">Take Note...</textarea>
+            </div>
+        `;
+
+            const btnAddNote = this.root.querySelector(".notes__add");
+            const inpTitle = this.root.querySelector(".notes__title");
+            const inpBody = this.root.querySelector(".notes__body");
+            const saveButton = this.root.querySelector(".notes__save");
+
+            saveButton.addEventListener("click", () => {
+                this.onSave();
+            });
+
+            btnAddNote.addEventListener("click", () => {
+                this.onNoteAdd();
+            });
+
+            [inpTitle, inpBody].forEach(inputField => {
+                inputField.addEventListener("blur", () => {
+                    const updatedTitle = inpTitle.value.trim();
+                    const updatedBody = inpBody.value.trim();
+                    this.onNoteEdit(updatedTitle, updatedBody);
+                });
+            });
+
+            this.updateNotePreviewVisibility(false);
+        }
+
+        _createListItemHTML(id, title, body, updated) {
+            const MAX_BODY_LENGTH = 25;
+
+            return `
+            <div class="notes__list-item" data-note-id="${id}">
+                <div class="notes__small-title">${title}</div>
+                <div class="notes__small-body">
+                    ${body.substring(0, MAX_BODY_LENGTH)}
+                    ${body.length > MAX_BODY_LENGTH ? "..." : ""}
+                </div>
+                <div class="notes__small-updated">
+                    ${updated.toLocaleString(undefined, {dateStyle: "full", timeStyle: "short"})}
+                </div>
+            </div>
+        `;
+        }
+
+        updateNoteList(notes) {
+            const notesListContainer = this.root.querySelector(".notes__list");
+            notesListContainer.innerHTML = "";
+            for (const note of notes) {
+                const html = this._createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
+
+                notesListContainer.insertAdjacentHTML("beforeend", html);
+            }
+
+            notesListContainer.querySelectorAll(".notes__list-item").forEach(noteListItem => {
+                noteListItem.addEventListener("click", () => {
+                    this.onNoteSelect(noteListItem.dataset.noteId);
+                });
+
+                noteListItem.addEventListener("dblclick", () => {
+                    const doDelete = confirm("Are you sure you want to delete this note?");
+
+                    if (doDelete) {
+                        this.onNoteDelete(noteListItem.dataset.noteId);
+                    }
+                });
+            });
+        }
+
+        updateActiveNote(note) {
+            this.root.querySelector(".notes__title").value = note.title;
+            this.root.querySelector(".notes__body").value = note.body;
+            this.root.querySelectorAll(".notes__list-item").forEach(noteListItem => {
+                noteListItem.classList.remove("notes__list-item--selected");
+            });
+            this.root.querySelector(`.notes__list-item[data-note-id="${note.id}"]`).classList.add("notes__list-item--selected");
+        }
+
+        updateNotePreviewVisibility(visible) {
+            this.root.querySelector(".notes__preview").style.visibility = visible ? "visible" : "hidden";
+        }
+    }
+
+    const root = document.getElementById("app");
+    const app = new App(root);
+
+</script>
+</body>
+</html>
