@@ -267,6 +267,7 @@
             <div class="notes" id="app-editor"></div>
             <div id="password" hidden>password</div>
             <div id="notes" hidden>notes</div>
+            <div id="salt" hidden>salt</div>
         </div>
     </div>
 </div>
@@ -387,37 +388,36 @@
             this.root = root;
             this.notes = [];
             this.activeNote = null;
-            this.passwordAPI = new PasswordAPI();
+            PasswordAPI.login();
             NotesAPI.decodeNotes();
-            this.notesAPI = new NotesAPI();
-            this.notesView = new NotesView(root, this._handlers());
-            this._refreshNotes();
+            this.notesView = new NotesView(root, this.handlers());
+            this.refreshNotes();
         }
 
-        _refreshNotes() {
+        refreshNotes() {
             const notes = NotesAPI.getAllNotes();
-            this._setNotes(notes);
+            this.setNotes(notes);
             if (notes.length &gt; 0) {
-                this._setActiveNote(notes[0]);
+                this.setActiveNote(notes[0]);
             }
         }
 
-        _setNotes(notes) {
+        setNotes(notes) {
             this.notes = notes;
             this.notesView.updateNoteList(notes);
             this.notesView.updateNotePreviewVisibility(notes.length &gt; 0);
         }
 
-        _setActiveNote(note) {
+        setActiveNote(note) {
             this.activeNote = note;
             this.notesView.updateActiveNote(note);
         }
 
-        _handlers() {
+        handlers() {
             return {
                 onNoteSelect: noteId =&gt; {
                     const selectedNote = this.notes.find(note =&gt; note.id == noteId);
-                    this._setActiveNote(selectedNote);
+                    this.setActiveNote(selectedNote);
                 },
                 onNoteEdit: (title, body) =&gt; {
                     NotesAPI.saveNote({
@@ -426,7 +426,7 @@
                             body
                         }
                     );
-                    this._refreshNotes();
+                    this.refreshNotes();
                 }
             };
         }
@@ -442,16 +442,6 @@
             return array.sort((a, b) =&gt; {
                 return new Date(a.updated) &gt; new Date(b.updated) ? -1 : 1;
             });
-        }
-
-        static encodeNotes() {
-            const key = document.getElementById(&quot;password&quot;).textContent;
-            const data = document.getElementById(&quot;notes&quot;).textContent;
-            if (data != &quot;notes&quot;) {
-                let array = JSON.parse(data || &quot;[]&quot;);
-                array = EncryptionAPI.encode(array, key);
-                document.getElementById(&quot;notes&quot;).textContent = JSON.stringify(array);
-            }
         }
 
         static decodeNotes() {
@@ -490,8 +480,10 @@
     class HashAPI {
 
         static countHash(value) {
+            const salt = document.getElementById("salt").textContent;
             const hash = sha256.create();
             hash.update(value);
+            hash.update(salt);
             return hash.hex();
         }
 
@@ -519,24 +511,39 @@
 
     class PasswordAPI {
 
-        constructor() {
+        static getPassword = function () {
+            return document.getElementById("password").textContent;
+        }
+
+        static setPassword = function (password) {
+            document.getElementById("password").textContent = password;
+        }
+
+        static login() {
+            const password = this.getPassword();
+
+            if (password === "password") {
+                let newPassword = this.createPassword();
+                this.setPassword(HashAPI.countHash(newPassword));
+            }
+
             const key = this.checkPassword();
             this.setPassword(key);
         }
 
-        getPassword = function () {
-            return document.getElementById(&quot;password&quot;).textContent;
+        static createPassword() {
+            let newPassword;
+            do {
+                newPassword = prompt("Create your secret password.", "");
+            } while (newPassword === "")
+            return newPassword;
         }
 
-        setPassword = function (password) {
-            document.getElementById(&quot;password&quot;).textContent = password;
-        }
-
-        checkPassword() {
+        static checkPassword() {
             let password;
             do {
-                password = prompt(&quot;Enter your password.&quot;, &quot;&quot;);
-            } while (!HashAPI.checkHash(document.getElementById(&quot;password&quot;), HashAPI.countHash(password)))
+                password = prompt("Enter your password.", "");
+            } while (!HashAPI.checkHash(document.getElementById("password"), HashAPI.countHash(password)))
             return password;
         }
     }
@@ -575,7 +582,7 @@
             this.updateNotePreviewVisibility(false);
         }
 
-        _createListItemHTML(id, title, body, updated) {
+        createListItemHTML(id, title, body, updated) {
             const MAX_BODY_LENGTH = 25;
 
             return `
@@ -596,7 +603,7 @@
             const notesListContainer = this.root.querySelector(&quot;.notes__list&quot;);
             notesListContainer.innerHTML = &quot;&quot;;
             for (const note of notes) {
-                const html = this._createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
+                const html = this.createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
 
                 notesListContainer.insertAdjacentHTML(&quot;beforeend&quot;, html);
             }
@@ -642,37 +649,36 @@
             this.root = root;
             this.notes = [];
             this.activeNote = null;
-            this.userPassword = new PasswordAPI();
+            PasswordAPI.login();
             NotesAPI.decodeNotes();
-            this.notesAPI = new NotesAPI();
-            this.notesView = new NotesView(root, this._handlers());
-            this._refreshNotes();
+            this.notesView = new NotesView(root, this.handlers());
+            this.refreshNotes();
         }
 
-        _refreshNotes() {
-            const notes = NotesAPI.getAllNotes(this.userPassword.password);
-            this._setNotes(notes);
+        refreshNotes() {
+            const notes = NotesAPI.getAllNotes();
+            this.setNotes(notes);
             if (notes.length > 0) {
-                this._setActiveNote(notes[0]);
+                this.setActiveNote(notes[0]);
             }
         }
 
-        _setNotes(notes) {
+        setNotes(notes) {
             this.notes = notes;
             this.notesView.updateNoteList(notes);
             this.notesView.updateNotePreviewVisibility(notes.length > 0);
         }
 
-        _setActiveNote(note) {
+        setActiveNote(note) {
             this.activeNote = note;
             this.notesView.updateActiveNote(note);
         }
 
-        _handlers() {
+        handlers() {
             return {
                 onNoteSelect: noteId => {
                     const selectedNote = this.notes.find(note => note.id == noteId);
-                    this._setActiveNote(selectedNote);
+                    this.setActiveNote(selectedNote);
                 },
                 onNoteAdd: () => {
                     const newNote = {
@@ -680,7 +686,7 @@
                         body: "Take note..."
                     };
                     NotesAPI.saveNote(newNote);
-                    this._refreshNotes();
+                    this.refreshNotes();
                 },
                 onNoteEdit: (title, body) => {
                     NotesAPI.saveNote({
@@ -689,11 +695,11 @@
                             body
                         }
                     );
-                    this._refreshNotes();
+                    this.refreshNotes();
                 },
                 onNoteDelete: noteId => {
                     NotesAPI.deleteNote(noteId);
-                    this._refreshNotes();
+                    this.refreshNotes();
                 },
                 onSave: async () => {
                     await FileAPI.save();
@@ -775,9 +781,9 @@
             const fileHandle = await window.showSaveFilePicker(opts);
             if (fileHandle != null) {
                 NotesAPI.encodeNotes();
-                const password = document.getElementById("password");
                 const notes = document.getElementById("notes");
                 const newNotebook = document.getElementById("newNotebook");
+                const salt = document.getElementById("salt");
                 const writable = await fileHandle.createWritable();
                 const htmlString = newNotebook.textContent;
                 const parser = new DOMParser();
@@ -787,9 +793,12 @@
                 newDocument.getElementById("password").textContent =  hash;
                 hash = HashAPI.countHash(newDocument.getElementById("notes").textContent);
                 newDocument.getElementById("hash").textContent =  hash;
+                const saltValue = salt.textContent;
+                newDocument.getElementById("salt").textContent =  saltValue;
                 await writable.write("<!DOCTYPE html><html lang='en'>" + newDocument.documentElement.innerHTML + "</html>");
                 await writable.close();
                 alert("Saved");
+                NotesAPI.decodeNotes();
             }
         }
 
@@ -801,6 +810,7 @@
                 const htmlString = await file.text();
                 const parser = new DOMParser();
                 const doc = await parser.parseFromString(htmlString, "text/html");
+                document.getElementById("salt").textContent = doc.getElementById("salt").textContent;
                 if (!HashAPI.checkHash(doc.getElementById("hash"), HashAPI.countHash(doc.getElementById("notes").textContent))) {
                     alert("Data integrity broken!!!");
                     return null;
@@ -815,9 +825,15 @@
     class HashAPI {
 
         static countHash(value) {
+            const saltElement = document.getElementById("salt");
+            let salt = saltElement.textContent;
+            if(salt === "salt") {
+                salt = this.makeSalt(6);
+                saltElement.textContent = salt;
+            }
             const hash = sha256.create();
             hash.update(value);
-            console.log(hash.hex());
+            hash.update(salt);
             return hash.hex();
         }
 
@@ -827,8 +843,15 @@
             } else return true;
         }
 
-        static saveHash(element, hash) {
-            element.textContent = hash;
+        static makeSalt(length) {
+            let result           = '';
+            const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            for ( let i = 0; i < length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() *
+                    charactersLength));
+            }
+            return result;
         }
 
     }
@@ -836,8 +859,9 @@
     class EncryptionAPI {
 
         static decode(array, key) {
+            let bytes;
             for (let i = 0; i < array.length; i++) {
-                let bytes = CryptoJS.AES.decrypt(array[i].body, key);
+                bytes = CryptoJS.AES.decrypt(array[i].body, key);
                 array[i].body = bytes.toString(CryptoJS.enc.Utf8);
                 bytes = CryptoJS.AES.decrypt(array[i].title, key);
                 array[i].title = bytes.toString(CryptoJS.enc.Utf8);
@@ -857,7 +881,15 @@
 
     class PasswordAPI {
 
-        constructor() {
+        static getPassword = function () {
+            return document.getElementById("password").textContent;
+        }
+
+        static setPassword = function (password) {
+            document.getElementById("password").textContent = password;
+        }
+
+        static login() {
             const password = this.getPassword();
 
             if (password === "password") {
@@ -869,15 +901,7 @@
             this.setPassword(key);
         }
 
-        getPassword = function () {
-            return document.getElementById("password").textContent;
-        }
-
-        setPassword = function (password) {
-            document.getElementById("password").textContent = password;
-        }
-
-        createPassword() {
+        static createPassword() {
             let newPassword;
             do {
                 newPassword = prompt("Create your secret password.", "");
@@ -885,7 +909,7 @@
             return newPassword;
         }
 
-        checkPassword() {
+        static checkPassword() {
             let password;
             do {
                 password = prompt("Enter your password.", "");
@@ -915,7 +939,6 @@
                 <button class="notes__save" type="button">Save as</button>
                 <button class="notes__add" type="button">Add Note</button>
                 <div class="notes__list"></div>
-
             </div>
             <div class="notes__preview">
                 <input class="notes__title" type="text" placeholder="New Note...">
@@ -947,7 +970,7 @@
             this.updateNotePreviewVisibility(false);
         }
 
-        _createListItemHTML(id, title, body, updated) {
+        createListItemHTML(id, title, body, updated) {
             const MAX_BODY_LENGTH = 25;
 
             return `
@@ -968,7 +991,7 @@
             const notesListContainer = this.root.querySelector(".notes__list");
             notesListContainer.innerHTML = "";
             for (const note of notes) {
-                const html = this._createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
+                const html = this.createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
 
                 notesListContainer.insertAdjacentHTML("beforeend", html);
             }
@@ -991,9 +1014,11 @@
         updateActiveNote(note) {
             this.root.querySelector(".notes__title").value = note.title;
             this.root.querySelector(".notes__body").value = note.body;
+
             this.root.querySelectorAll(".notes__list-item").forEach(noteListItem => {
                 noteListItem.classList.remove("notes__list-item--selected");
             });
+
             this.root.querySelector(`.notes__list-item[data-note-id="${note.id}"]`).classList.add("notes__list-item--selected");
         }
 
@@ -1009,8 +1034,6 @@
             this.onNotebookEdit = onNotebookEdit;
             this.onBack = onBack;
 
-            const password = document.getElementById("password");
-            const notes = document.getElementById("notes");
             const stage = document.getElementById("stage");
             const root = document.getElementById("app-editor");
 
@@ -1019,15 +1042,15 @@
             const buttonBack = document.getElementById("back");
 
             buttonCreateNotebook.addEventListener("click", () => {
-                this.onNotebookCreate(password, notes, buttonBack, stage, root);
+                this.onNotebookCreate(buttonBack, stage, root);
             });
 
             buttonEditNotebook.addEventListener("click", () => {
-                this.onNotebookEdit(password, notes, buttonBack, stage, root);
+                this.onNotebookEdit(buttonBack, stage, root);
             });
 
             buttonBack.addEventListener("click", () => {
-                this.onBack(password, notes, stage, buttonBack);
+                this.onBack(stage, buttonBack);
             });
 
         }
@@ -1036,39 +1059,42 @@
 
     class MenuAPI {
 
-        async setData(passwordElement, passwordString, notesElement, notesString) {
-            passwordElement.textContent = passwordString;
-            notesElement.textContent = notesString;
+        static async setData(password, notes, salt) {
+            document.getElementById("password").textContent = password;
+            document.getElementById("notes").textContent = notes;
+            document.getElementById("salt").textContent = salt;
         };
 
-        async createNotebook(passwordElement, notesElement, back, stage, root) {
+        static async createNotebook(back, stage, root) {
             const password = "password";
             const notes = "notes";
-            await this.setData(passwordElement, password, notesElement, notes);
+            const salt = "salt"
+            await this.setData(password, notes, salt);
             new App(root);
             this.step(back, stage, 2);
         };
 
-        async editNotebook(passwordElement, notesElement, back, stage, root) {
+        static async editNotebook(back, stage, root) {
             const doc = await FileAPI.open();
-            console.log(doc.documentElement.innerHTML);
             if (doc != null) {
                 const password = doc.getElementById("password").textContent;
                 const notes = doc.getElementById("notes").textContent;
-                await this.setData(passwordElement, password, notesElement, notes);
+                const salt = doc.getElementById("salt").textContent;
+                await this.setData(password, notes, salt);
                 new App(root);
                 this.step(back, stage, 2);
             }
         }
 
-        async back(passwordElement, notesElement, stage, back) {
+        static async back(stage, back) {
             const password = "password";
             const notes = "notes";
-            await this.setData(passwordElement, password, notesElement, notes);
+            const salt = "salt";
+            await this.setData(password, notes, salt);
             this.step(back, stage, 1);
         }
 
-        step(back, stage, i) {
+        static step(back, stage, i) {
             if (i == 1) {
                 this.fadeOut(back, 500);
             } else {
@@ -1077,15 +1103,13 @@
             stage.style.top = (-(i - 1) * 100) + "%";
         }
 
-        fadeIn(el, timeout) {
-            console.log(el);
+        static fadeIn(el, timeout) {
             el.style.opacity = 0;
             el.style.transition = `opacity ${timeout}ms`;
             el.style.opacity = 1;
         }
 
-        fadeOut(el, timeout) {
-            console.log(el);
+        static fadeOut(el, timeout) {
             el.style.opacity = 1;
             el.style.transition = `opacity ${timeout}ms`;
             el.style.opacity = 0;
@@ -1095,20 +1119,19 @@
     class MenuApp {
 
         constructor() {
-            this.menuAPI = new MenuAPI();
-            this.menuView = new MenuView(this._handlers());
+            this.menuView = new MenuView(this.handlers());
         }
 
-        _handlers() {
+        handlers() {
             return {
-                onNotebookEdit: (passwordElement, notesElement, back, stage, root) => {
-                    this.menuAPI.editNotebook(passwordElement, notesElement, back, stage, root);
+                onNotebookEdit: (back, stage, root) => {
+                    MenuAPI.editNotebook(back, stage, root);
                 },
-                onNotebookCreate: (passwordElement, notesElement, back, stage, root) => {
-                    this.menuAPI.createNotebook(passwordElement, notesElement, back, stage, root);
+                onNotebookCreate: (back, stage, root) => {
+                    MenuAPI.createNotebook(back, stage, root);
                 },
-                onBack: (passwordElement, notesElement, back, stage) => {
-                    this.menuAPI.back(passwordElement, notesElement, back, stage);
+                onBack: (back, stage) => {
+                    MenuAPI.back(back, stage);
                 }
             }
         }
