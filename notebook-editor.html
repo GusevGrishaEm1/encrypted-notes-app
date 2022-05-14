@@ -61,7 +61,7 @@
             height: 32px;
             position: absolute;
             cursor: pointer;
-            top: 50px;
+            top: 25px;
             left: 50%;
             z-index: 10;
             margin-left: -16px;
@@ -109,7 +109,7 @@
         }
 
         .button.magenta {
-            background-color: #e661b7;
+            background-color: #f687ca;
         }
 
         .content {
@@ -125,7 +125,7 @@
         }
 
         #editor {
-            background-color: #eceeab;
+            background-color: #f5dddd;
         }
 
         #menu .content {
@@ -149,7 +149,7 @@
             border-right: 2px solid #575757;
             overflow-y: auto;
             padding: 1em;
-            width: 300px;
+            width: 400px;
             height: 600px;
         }
 
@@ -189,11 +189,14 @@
         }
 
         .notes__list-item {
+            margin-bottom: 5px;
+            border: 2px black solid;
+            border-radius: 10px;
             cursor: pointer;
         }
 
         .notes__list-item--selected {
-            background: #eeeeee;
+            background: #a6a6a6;
             border-radius: 7px;
             font-weight: bold;
         }
@@ -204,10 +207,12 @@
         }
 
         .notes__small-title {
+            text-align: center;
             font-size: 1.2em;
         }
 
         .notes__small-body {
+            text-align: center;
             padding: 0 10px;
         }
 
@@ -218,31 +223,31 @@
         }
 
         .notes__preview {
+            background: url(http://i.stack.imgur.com/ynxjD.png) repeat-y;
             display: flex;
+            min-width: 200px;
+            max-width: 600px;
             flex-direction: column;
             padding: 2em 3em;
             flex-grow: 1;
+            height: auto;
+            margin-left: 100px;
         }
-
         .notes__title,
         .notes__body {
-
-            background-color: #eceeab;
             border: none;
             outline: none;
-            width: 100%;
         }
 
         .notes__title {
-            border-bottom: solid 2px black;
+            background: none;
             font-size: 3em;
             font-weight: bold;
-
         }
 
         .notes__body {
-            border-radius: 8px 0 0 8px;
-            border: solid 2px black;
+            overflow-y: hidden;
+            background: none;
             flex-grow: 1;
             font-size: 1.2em;
             line-height: 1.5;
@@ -286,7 +291,7 @@
         html {
             padding-top: 20px;
             overflow: hidden;
-            background-color: #eceeab;
+             background-color: #f5dddd;
         }
 
         .notes {
@@ -298,19 +303,22 @@
         }
 
         .notes__sidebar {
+            width: 400px;
             border-right: 2px solid #575757;
             overflow-y: auto;
             padding: 1em;
-            width: 300px;
             height: 600px;
         }
 
         .notes__list-item {
+            margin-bottom: 5px;
+            border: 2px black solid;
+            border-radius: 10px;
             cursor: pointer;
         }
 
         .notes__list-item--selected {
-            background: #eeeeee;
+           background: #a6a6a6;
             border-radius: 7px;
             font-weight: bold;
         }
@@ -321,10 +329,12 @@
         }
 
         .notes__small-title {
+            text-align: center;
             font-size: 1.2em;
         }
 
         .notes__small-body {
+            text-align: center;
             padding: 0 10px;
         }
 
@@ -335,38 +345,39 @@
         }
 
         .notes__preview {
+            background: url(http://i.stack.imgur.com/ynxjD.png) repeat-y;
             display: flex;
+            min-width: 200px;
+            max-width: 600px;
             flex-direction: column;
             padding: 2em 3em;
             flex-grow: 1;
+            height: auto;
+            margin-left: 100px;
         }
 
         .notes__title,
         .notes__body {
-            background-color: #eceeab;
             border: none;
             outline: none;
-            width: 100%;
 
         }
 
         .notes__title {
-            border-bottom: solid 2px black;
+            background: none;
             font-size: 3em;
             font-weight: bold;
 
         }
 
         .notes__body {
-            overflow-y: auto;
-            border-radius: 8px 0 0 8px;
-            border: solid 2px black;
+            overflow-y: hidden;
+            background: none;
             flex-grow: 1;
             font-size: 1.2em;
             line-height: 1.5;
             margin-top: 2em;
             resize: none;
-            height: 500px;
         }
 
     &lt;/style&gt;
@@ -790,11 +801,11 @@
                 const newDocument = await parser.parseFromString(htmlString, "text/html")
                 newDocument.getElementById("notes").textContent = notes.textContent;
                 let hash = HashAPI.countHash(document.getElementById("password").textContent);
-                newDocument.getElementById("password").textContent =  hash;
+                newDocument.getElementById("password").textContent = hash;
                 hash = HashAPI.countHash(newDocument.getElementById("notes").textContent);
-                newDocument.getElementById("hash").textContent =  hash;
+                newDocument.getElementById("hash").textContent = hash;
                 const saltValue = salt.textContent;
-                newDocument.getElementById("salt").textContent =  saltValue;
+                newDocument.getElementById("salt").textContent = saltValue;
                 await writable.write("<!DOCTYPE html><html lang='en'>" + newDocument.documentElement.innerHTML + "</html>");
                 await writable.close();
                 alert("Saved");
@@ -827,7 +838,7 @@
         static countHash(value) {
             const saltElement = document.getElementById("salt");
             let salt = saltElement.textContent;
-            if(salt === "salt") {
+            if (salt === "salt") {
                 salt = this.makeSalt(6);
                 saltElement.textContent = salt;
             }
@@ -844,10 +855,10 @@
         }
 
         static makeSalt(length) {
-            let result           = '';
-            const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             const charactersLength = characters.length;
-            for ( let i = 0; i < length; i++ ) {
+            for (let i = 0; i < length; i++) {
                 result += characters.charAt(Math.floor(Math.random() *
                     charactersLength));
             }
@@ -942,8 +953,9 @@
             </div>
             <div class="notes__preview">
                 <input class="notes__title" type="text" placeholder="New Note...">
-                <textarea class="notes__body">Take Note...</textarea>
+                <textarea class="notes__body" rows="10">Take Note...</textarea>
             </div>
+
         `;
 
             const btnAddNote = this.root.querySelector(".notes__add");
@@ -971,7 +983,7 @@
         }
 
         createListItemHTML(id, title, body, updated) {
-            const MAX_BODY_LENGTH = 25;
+            const MAX_BODY_LENGTH = 15;
 
             return `
             <div class="notes__list-item" data-note-id="${id}">
