@@ -1,0 +1,366 @@
+<!DOCTYPE html><html lang='en'><head>
+    <meta charset="utf-8">
+    <title>Notebook Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            padding-top: 20px;
+            overflow: hidden;
+            background-color: #eceeab;
+        }
+
+        .notes {
+            display: flex;
+        }
+
+        .notes * {
+            font-family: sans-serif;
+        }
+
+        .notes__sidebar {
+            border-right: 2px solid #575757;
+            overflow-y: auto;
+            padding: 1em;
+            width: 300px;
+            height: 600px;
+        }
+
+        .notes__list-item {
+            cursor: pointer;
+        }
+
+        .notes__list-item--selected {
+            background: #eeeeee;
+            border-radius: 7px;
+            font-weight: bold;
+        }
+
+        .notes__small-title,
+        .notes__small-updated {
+            padding: 10px;
+        }
+
+        .notes__small-title {
+            font-size: 1.2em;
+        }
+
+        .notes__small-body {
+            padding: 0 10px;
+        }
+
+        .notes__small-updated {
+            color: #575757;
+            font-style: italic;
+            text-align: right;
+        }
+
+        .notes__preview {
+            display: flex;
+            flex-direction: column;
+            padding: 2em 3em;
+            flex-grow: 1;
+        }
+
+        .notes__title,
+        .notes__body {
+            background-color: #eceeab;
+            border: none;
+            outline: none;
+            width: 100%;
+
+        }
+
+        .notes__title {
+            border-bottom: solid 2px black;
+            font-size: 3em;
+            font-weight: bold;
+
+        }
+
+        .notes__body {
+            overflow-y: auto;
+            border-radius: 8px 0 0 8px;
+            border: solid 2px black;
+            flex-grow: 1;
+            font-size: 1.2em;
+            line-height: 1.5;
+            margin-top: 2em;
+            resize: none;
+            height: 500px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="content" class="content">
+    <div class="notes" id="app-reader"></div>
+    <div id="password" hidden="">0374b809c9e56ca039c850addffc89e73cf6a9f46c4e9d6014a156b66fe27b91</div>
+    <div id="salt" hidden="">LcQ3zZ</div>
+    <div id="notes" hidden="">[{"title":"U2FsdGVkX1933sXdR/YBoTmmTkqla/vA89doYEsn5M9lTG7D0FzNshDVUBr4yHvHFsH5g0fewaht9Agd0/22OA==","body":"U2FsdGVkX1+mXFOmNERgTEAjwyuNGrX51vg/cNponRNR7JLpvZ2Knypw1XT9UJeqZM9IYay/zzXW6/ygk131uRg/zQgu46dm580OP7UG43HSUFaYNTbIWqZhX8H18X5bR49PlAUX//72z4fUU8D2M5vi6z76T4V3cXNBLCHdoBbaTf3IqX2M9qJO/D0uA+lDihz1+GkYKB1syFxTBvL0/XRI+jdusu3PUEfiLlb5boIhi4gR6FG2YSLYxYRfYVU1v0HJOAWNEn79zo+usoGfLSBO1vaR3enrs205PavBUD/YvGLGx7J24ykhXlo51Az+","id":566627,"updated":"2022-05-13T20:40:25.477Z"},{"title":"U2FsdGVkX19sPljN2e/FhrpYijAxLzxAHaGRr7aGsVo=","body":"U2FsdGVkX19kG8sA3LKmvXF5xY47ECTnm8qvouoe7gv+6UIYwComkCFfjGUb9tG9sKqRVm1JfiPAcs9djvHkNMgafQi/sVOJMp9mRkydMYVUKS3ZkYeEMsFsZNNBNvhWpYy5oUrwo60+znJCyhVnXg==","id":51967,"updated":"2022-05-13T20:37:44.356Z"},{"title":"U2FsdGVkX18S8YGGt3YObxZl7xSc1iMTTmv6mT2PnzM=","body":"U2FsdGVkX18FUkWlT04jY7StBsNJG5+Ev/N2zNQClzH54uLNIWe6km+3SZRWefXL3dYG+YSrgiC4d86E0aVd5T/RLp1mqb5VLc1LUqEO2UAoy08wBcMn9xDxahNv0w6J7d3eFDH6i1icFgpyuGNPB9eoTHs+A5JBMYZfHbMxijgsvxnpl0oAnoM7+k61avqzmnAYgnComGh/T5vmyWkw4ReJ6sHfXRBfmyz+8lspbBgQze+N3ok0MYGfd1+AkO8STNMHtDu0DvsYvd6XbHlLMPJC1mFz84cqzc2Ahm0v+D1QXyGzUJKVrutYoZYwL5h5eGxtt4/ttsp/QRgDOmjadPnRbQQ0+n/eSfPi1GuoHFFQc4r1biMeGNLSzhvADCa3As7zwo7aSctYgadArSctayiZD780i+mA54VjlQP/GN7IrMeZg6+V380QHDdIq/1/zwxZIO25Natj4xcuMSjpL7r8TRBiYNyHaEeMWnTYKjFiP0hCf+ktMYqiPqCObowjWvqCKn5HlU+cchkG1Przaprh/jed4fS3iJLacRd9KpPYdwFtzEW8hm47cno1g+PmCjvNb/qZZZUJZ6hy84HpVhdBJgXTV7VgnVkmuRZaiwqDLGvvtoJQSoTOqyqK1XYjNwwt1O6e9axkV7YjHk1rsLCWYNPajcJft1tzjUPrL4wg0abSEgr8z+k+JkbcjKNrpk+xMb5Wv0QmN7gTf/hYsuwLtQbakqWUAJiSOHOJQPN98So0wZMwsTZix5yJUgD4","id":550879,"updated":"2022-05-13T20:36:30.171Z"}]</div>
+    <div id="hash" hidden="">97c90b02f0173080fd74042280b88375f7718ebba72ff6a31c5750c4899e448d</div>
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+<script>
+    class App {
+        constructor(root) {
+            this.root = root;
+            this.notes = [];
+            this.activeNote = null;
+            PasswordAPI.login();
+            NotesAPI.decodeNotes();
+            this.notesView = new NotesView(root, this.handlers());
+            this.refreshNotes();
+        }
+
+        refreshNotes() {
+            const notes = NotesAPI.getAllNotes();
+            this.setNotes(notes);
+            if (notes.length > 0) {
+                this.setActiveNote(notes[0]);
+            }
+        }
+
+        setNotes(notes) {
+            this.notes = notes;
+            this.notesView.updateNoteList(notes);
+            this.notesView.updateNotePreviewVisibility(notes.length > 0);
+        }
+
+        setActiveNote(note) {
+            this.activeNote = note;
+            this.notesView.updateActiveNote(note);
+        }
+
+        handlers() {
+            return {
+                onNoteSelect: noteId => {
+                    const selectedNote = this.notes.find(note => note.id == noteId);
+                    this.setActiveNote(selectedNote);
+                },
+                onNoteEdit: (title, body) => {
+                    NotesAPI.saveNote({
+                            id: this.activeNote.id,
+                            title,
+                            body
+                        }
+                    );
+                    this.refreshNotes();
+                }
+            };
+        }
+    }
+
+    class NotesAPI {
+
+        static getAllNotes() {
+            const data = document.getElementById("notes").textContent;
+            console.log(data);
+            const array = JSON.parse(data || "[]");
+            console.log(data);
+            return array.sort((a, b) => {
+                return new Date(a.updated) > new Date(b.updated) ? -1 : 1;
+            });
+        }
+
+        static decodeNotes() {
+            const key = document.getElementById("password").textContent;
+            const data = document.getElementById("notes").textContent;
+            if (data != "notes") {
+                let array = JSON.parse(data || "[]");
+                array = EncryptionAPI.decode(array, key);
+                document.getElementById("notes").textContent = JSON.stringify(array);
+            }
+        }
+
+        static saveNote(noteToSave) {
+            const notes = NotesAPI.getAllNotes();
+            const existing = notes.find(note => note.id == noteToSave.id);
+
+            if (existing) {
+                existing.title = noteToSave.title;
+                existing.body = noteToSave.body;
+                existing.updated = new Date().toISOString();
+            } else {
+                noteToSave.id = Math.floor(Math.random() * 1000000);
+                noteToSave.updated = new Date().toISOString();
+                notes.push(noteToSave);
+            }
+
+            NotesAPI.saveNotes(notes);
+        }
+
+        static saveNotes(notes) {
+            document.getElementById("notes").textContent = JSON.stringify(notes);
+        }
+
+    }
+
+    class HashAPI {
+
+        static countHash(value) {
+            const salt = document.getElementById("salt").textContent;
+            const hash = sha256.create();
+            hash.update(value);
+            hash.update(salt);
+            return hash.hex();
+        }
+
+        static checkHash(element, value) {
+            if (value != element.textContent) {
+                return false;
+            } else return true;
+        }
+
+    }
+
+    class EncryptionAPI {
+
+        static decode(array, key) {
+            for (let i = 0; i < array.length; i++) {
+                let bytes = CryptoJS.AES.decrypt(array[i].body, key);
+                array[i].body = bytes.toString(CryptoJS.enc.Utf8);
+                bytes = CryptoJS.AES.decrypt(array[i].title, key);
+                array[i].title = bytes.toString(CryptoJS.enc.Utf8);
+            }
+            return array;
+        }
+
+    }
+
+    class PasswordAPI {
+
+        static getPassword = function () {
+            return document.getElementById("password").textContent;
+        }
+
+        static setPassword = function (password) {
+            document.getElementById("password").textContent = password;
+        }
+
+        static login() {
+            const password = this.getPassword();
+
+            if (password === "password") {
+                let newPassword = this.createPassword();
+                this.setPassword(HashAPI.countHash(newPassword));
+            }
+
+            const key = this.checkPassword();
+            this.setPassword(key);
+        }
+
+        static createPassword() {
+            let newPassword;
+            do {
+                newPassword = prompt("Create your secret password.", "");
+            } while (newPassword === "")
+            return newPassword;
+        }
+
+        static checkPassword() {
+            let password;
+            do {
+                password = prompt("Enter your password.", "");
+            } while (!HashAPI.checkHash(document.getElementById("password"), HashAPI.countHash(password)))
+            return password;
+        }
+    }
+
+    class NotesView {
+        constructor(root, {
+            onNoteSelect,
+            onNoteEdit
+        } = {}) {
+
+            this.root = root;
+            this.onNoteSelect = onNoteSelect;
+            this.onNoteEdit = onNoteEdit;
+            this.root.innerHTML = `
+            <div class="notes__sidebar">
+                <div class="notes__list"></div>
+
+            </div>
+            <div class="notes__preview">
+                <input class="notes__title" type="text" placeholder="New Note...">
+                <textarea class="notes__body">Take Note...</textarea>
+            </div>
+        `;
+
+            const inpTitle = this.root.querySelector(".notes__title");
+            const inpBody = this.root.querySelector(".notes__body");
+
+            [inpTitle, inpBody].forEach(inputField => {
+                inputField.addEventListener("blur", () => {
+                    const updatedTitle = inpTitle.value.trim();
+                    const updatedBody = inpBody.value.trim();
+                    this.onNoteEdit(updatedTitle, updatedBody);
+                });
+            });
+
+            this.updateNotePreviewVisibility(false);
+        }
+
+        createListItemHTML(id, title, body, updated) {
+            const MAX_BODY_LENGTH = 25;
+
+            return `
+            <div class="notes__list-item" data-note-id="${id}">
+                <div class="notes__small-title">${title}</div>
+                <div class="notes__small-body">
+                    ${body.substring(0, MAX_BODY_LENGTH)}
+                    ${body.length > MAX_BODY_LENGTH ? "..." : ""}
+                </div>
+                <div class="notes__small-updated">
+                    ${updated.toLocaleString(undefined, {dateStyle: "full", timeStyle: "short"})}
+                </div>
+            </div>
+        `;
+        }
+
+        updateNoteList(notes) {
+            const notesListContainer = this.root.querySelector(".notes__list");
+            notesListContainer.innerHTML = "";
+            for (const note of notes) {
+                const html = this.createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
+
+                notesListContainer.insertAdjacentHTML("beforeend", html);
+            }
+
+            notesListContainer.querySelectorAll(".notes__list-item").forEach(noteListItem => {
+                noteListItem.addEventListener("click", () => {
+                    this.onNoteSelect(noteListItem.dataset.noteId);
+                });
+            });
+        }
+
+        updateActiveNote(note) {
+            this.root.querySelector(".notes__title").value = note.title;
+            this.root.querySelector(".notes__body").value = note.body;
+            this.root.querySelectorAll(".notes__list-item").forEach(noteListItem => {
+                noteListItem.classList.remove("notes__list-item--selected");
+            });
+            this.root.querySelector(`.notes__list-item[data-note-id="${note.id}"]`).classList.add("notes__list-item--selected");
+        }
+
+        updateNotePreviewVisibility(visible) {
+            this.root.querySelector(".notes__preview").style.visibility = visible ? "visible" : "hidden";
+        }
+    }
+
+    if (!HashAPI.checkHash(document.getElementById("hash"),
+        HashAPI.countHash(document.getElementById("notes").textContent))) {
+        alert("Data integrity broken!!!");
+    } else {
+        const root = document.getElementById("app-reader");
+        new App(root);
+    }
+
+</script>
+
+</body></html>
