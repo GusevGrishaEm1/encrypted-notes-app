@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
     <title>Notebook Editor</title>
     <style>
 
@@ -233,6 +235,7 @@
             height: auto;
             margin-left: 100px;
         }
+
         .notes__title,
         .notes__body {
             border: none;
@@ -270,9 +273,10 @@
     <div id="editor">
         <div class="content">
             <div class="notes" id="app-editor"></div>
-            <div id="password" hidden>password</div>
             <div id="notes" hidden>notes</div>
+            <div id="checkSum" hidden>checkSum</div>
             <div id="salt" hidden>salt</div>
+            <div id="passwordHash" hidden>passwordHash</div>
         </div>
     </div>
 </div>
@@ -281,17 +285,26 @@
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
     &lt;meta charset=&quot;utf-8&quot;/&gt;
-    &lt;title&gt;Notebook Editor&lt;/title&gt;
+        &lt;meta charset=&quot;UTF-8&quot;/&gt;
+    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;/&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=&lt;device-width/&gt;, initial-scale=1.0&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css&quot; integrity=&quot;sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u&quot; crossorigin=&quot;anonymous&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css&quot; integrity=&quot;sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp&quot; crossorigin=&quot;anonymous&quot;&gt;
+    &lt;title&gt;Notebook Reader&lt;/title&gt;
     &lt;style&gt;
-        * {
+  * {
             margin: 0;
             padding: 0;
         }
 
-        html {
+        html  {
             padding-top: 20px;
-            overflow: hidden;
-             background-color: #f5dddd;
+            overflow: auto;
+            background-color: #f5dddd;
+        }
+
+        .content {
+            background-color: #f5dddd;
         }
 
         .notes {
@@ -303,14 +316,15 @@
         }
 
         .notes__sidebar {
-            width: 400px;
             border-right: 2px solid #575757;
             overflow-y: auto;
             padding: 1em;
             height: 600px;
+            width: auto;
         }
 
         .notes__list-item {
+            width: auto;
             margin-bottom: 5px;
             border: 2px black solid;
             border-radius: 10px;
@@ -318,7 +332,7 @@
         }
 
         .notes__list-item--selected {
-           background: #a6a6a6;
+            background-color: #a6a6a6;
             border-radius: 7px;
             font-weight: bold;
         }
@@ -344,16 +358,15 @@
             text-align: right;
         }
 
+
         .notes__preview {
+            width: auto;
             background: url(http://i.stack.imgur.com/ynxjD.png) repeat-y;
             display: flex;
-            min-width: 200px;
-            max-width: 600px;
             flex-direction: column;
             padding: 2em 3em;
             flex-grow: 1;
-            height: auto;
-            margin-left: 100px;
+            height: 600px;
         }
 
         .notes__title,
@@ -385,24 +398,32 @@
 &lt;body&gt;
 &lt;div id = &quot;content&quot; class=&quot;content&quot;&gt;
     &lt;div class=&quot;notes&quot; id=&quot;app-reader&quot;&gt;&lt;/div&gt;
-    &lt;div id=&quot;password&quot; hidden&gt;2d9bb79e9b1a374291eaa7c914433258101ca8f069f8575a50fda4a3e96e698c&lt;/div&gt;
+            &lt;div id=&quot;notes&quot; hidden&gt;notes&lt;/div&gt;
+            &lt;div id=&quot;checkSum&quot; hidden&gt;checkSum&lt;/div&gt;
+    &lt;div id=&quot;passwordHash&quot; hidden&gt;passwordHash&lt;/div&gt;
     &lt;div id=&quot;salt&quot; hidden&gt;salt&lt;/div&gt;
-    &lt;div id=&quot;notes&quot; hidden&gt;[{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:73148,&quot;updated&quot;:&quot;2022-05-09T19:10:53.101Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:750428,&quot;updated&quot;:&quot;2022-05-09T19:10:52.920Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:64517,&quot;updated&quot;:&quot;2022-05-09T19:10:52.724Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:17967,&quot;updated&quot;:&quot;2022-05-09T19:10:52.528Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:813090,&quot;updated&quot;:&quot;2022-05-09T19:10:52.333Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:698163,&quot;updated&quot;:&quot;2022-05-09T19:10:52.136Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:877348,&quot;updated&quot;:&quot;2022-05-09T19:10:51.518Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:871347,&quot;updated&quot;:&quot;2022-05-09T19:05:03.665Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:407108,&quot;updated&quot;:&quot;2022-05-09T19:05:02.422Z&quot;},{&quot;title&quot;:&quot;New Note&quot;,&quot;body&quot;:&quot;Take note...&quot;,&quot;id&quot;:185103,&quot;updated&quot;:&quot;2022-05-09T19:10:53.317Z&quot;}]&lt;/div&gt;
-    &lt;div id=&quot;hash&quot; hidden&gt;0d768a6e2edc9a53f0068b0a3771c9c858fe83d712f1e109003223ebbf2c791d&lt;/div&gt;
 &lt;/div&gt;
 &lt;/body&gt;
 &lt;script type=&quot;text/javascript&quot; src=&quot;https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js&quot;&gt;&lt;/script&gt;
 &lt;script type=&quot;text/javascript&quot; src=&quot;https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js&quot;&gt;&lt;/script&gt;
-&lt;script&gt;
+     &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js&quot;&gt;&lt;/script&gt;
+   &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js&quot; integrity=&quot;sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;https://raw.githack.com/mp81ss/rss/master/src/gost.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;
     class App {
         constructor(root) {
             this.root = root;
             this.notes = [];
             this.activeNote = null;
             PasswordAPI.login();
+            HashAPI.decodeCheckSum();
             NotesAPI.decodeNotes();
-            this.notesView = new NotesView(root, this.handlers());
-            this.refreshNotes();
+            if (HashAPI.getCheckSum() == "checkSum" || HashAPI.checkSum(HashAPI.createCheckSum(NotesAPI.getNotes()))) {
+                this.notesView = new NotesView(root, this.handlers());
+                this.refreshNotes();
+            } else {
+                alert("Access denied.");
+            }
         }
 
         refreshNotes() {
@@ -446,62 +467,87 @@
     class NotesAPI {
 
         static getAllNotes() {
-            const data = document.getElementById(&quot;notes&quot;).textContent;
-            console.log(data);
+            const data = this.getNotes();
             const array = JSON.parse(data || &quot;[]&quot;);
-            console.log(data);
             return array.sort((a, b) =&gt; {
                 return new Date(a.updated) &gt; new Date(b.updated) ? -1 : 1;
             });
         }
 
         static decodeNotes() {
-            const key = document.getElementById(&quot;password&quot;).textContent;
-            const data = document.getElementById(&quot;notes&quot;).textContent;
-            if (data != &quot;notes&quot;) {
-                let array = JSON.parse(data || &quot;[]&quot;);
+            const key = PasswordAPI.key;
+            const data = this.getNotes();
+            if (data != "notes") {
+                let array = JSON.parse(data || "[]");
                 array = EncryptionAPI.decode(array, key);
-                document.getElementById(&quot;notes&quot;).textContent = JSON.stringify(array);
+                this.setNotes(JSON.stringify(array));
             }
         }
 
-        static saveNote(noteToSave) {
-            const notes = NotesAPI.getAllNotes();
-            const existing = notes.find(note =&gt; note.id == noteToSave.id);
-
-            if (existing) {
-                existing.title = noteToSave.title;
-                existing.body = noteToSave.body;
-                existing.updated = new Date().toISOString();
-            } else {
-                noteToSave.id = Math.floor(Math.random() * 1000000);
-                noteToSave.updated = new Date().toISOString();
-                notes.push(noteToSave);
-            }
-
-            NotesAPI.saveNotes(notes);
+        static getNotes() {
+            return document.getElementById("notes").textContent;
         }
 
-        static saveNotes(notes) {
-            document.getElementById(&quot;notes&quot;).textContent = JSON.stringify(notes);
+        static setNotes(notes) {
+            document.getElementById("notes").textContent = notes;
         }
 
     }
 
     class HashAPI {
 
-        static countHash(value) {
-            const salt = document.getElementById("salt").textContent;
+        static getPasswordHash = function () {
+            return document.getElementById("passwordHash").textContent;
+        }
+
+        static setPasswordHash = function (passwordHash) {
+            document.getElementById("passwordHash").textContent = passwordHash;
+        }
+
+        static getCheckSum() {
+            return document.getElementById("checkSum").textContent;
+        }
+
+        static setCheckSum(checkSum) {
+            document.getElementById("checkSum").textContent = checkSum;
+        }
+
+        static createHash(value) {
+            let salt = PasswordAPI.getSalt();
+            if (salt === "salt") {
+                salt = PasswordAPI.makeSalt(32);
+                PasswordAPI.setSalt(salt);
+            }
             const hash = sha256.create();
             hash.update(value);
             hash.update(salt);
             return hash.hex();
         }
 
-        static checkHash(element, value) {
-            if (value != element.textContent) {
+        static checkHash(value) {
+            if (this.getPasswordHash() === value) {
+                return true;
+            } else {
                 return false;
-            } else return true;
+            }
+        }
+
+        static checkSum(value) {
+            if (this.getCheckSum() === value) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        static createCheckSum(value) {
+            const hash = sha256.create();
+            hash.update(value);
+            return hash.hex();
+        }
+
+        static decodeCheckSum() {
+            this.setCheckSum(GostCipher.decrypt(this.getCheckSum(), PasswordAPI.key));
         }
 
     }
@@ -509,53 +555,42 @@
     class EncryptionAPI {
 
         static decode(array, key) {
-            for (let i = 0; i &lt; array.length; i++) {
-                let bytes = CryptoJS.AES.decrypt(array[i].body, key);
-                array[i].body = bytes.toString(CryptoJS.enc.Utf8);
-                bytes = CryptoJS.AES.decrypt(array[i].title, key);
-                array[i].title = bytes.toString(CryptoJS.enc.Utf8);
+            for (var i = 0; i &lt; array.length; i++) {
+                array[i].title = GostCipher.decrypt(array[i].title, key);
+                array[i].body = GostCipher.decrypt(array[i].body, key);
             }
             return array;
+        }
+
+        static generateKey(password, salt) {
+            return CryptoJS.PBKDF2(password, salt, {keySize: 32 / 4, iterations: 1000});
         }
 
     }
 
     class PasswordAPI {
 
-        static getPassword = function () {
-            return document.getElementById("password").textContent;
+       static key;
+
+        static getSalt = function () {
+            return document.getElementById("salt").textContent;
         }
 
-        static setPassword = function (password) {
-            document.getElementById("password").textContent = password;
+        static setSalt = function (passwordHash) {
+            document.getElementById("salt").textContent = passwordHash;
         }
 
         static login() {
-            const password = this.getPassword();
-
-            if (password === "password") {
-                let newPassword = this.createPassword();
-                this.setPassword(HashAPI.countHash(newPassword));
-            }
-
-            const key = this.checkPassword();
-            this.setPassword(key);
+            const newPassword = HashAPI.getPasswordHash();
+            this.enterPassword();
         }
 
-        static createPassword() {
-            let newPassword;
-            do {
-                newPassword = prompt("Create your secret password.", "");
-            } while (newPassword === "")
-            return newPassword;
-        }
-
-        static checkPassword() {
+        static enterPassword() {
             let password;
             do {
                 password = prompt("Enter your password.", "");
-            } while (!HashAPI.checkHash(document.getElementById("password"), HashAPI.countHash(password)))
-            return password;
+            } while (!HashAPI.checkHash(HashAPI.createHash(password)))
+            this.key = EncryptionAPI.generateKey(password, this.getSalt()).toString(CryptoJS.enc.Hex);
         }
     }
 
@@ -569,14 +604,22 @@
             this.onNoteSelect = onNoteSelect;
             this.onNoteEdit = onNoteEdit;
             this.root.innerHTML = `
+    &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-md-4&quot;&gt;
             &lt;div class=&quot;notes__sidebar&quot;&gt;
                 &lt;div class=&quot;notes__list&quot;&gt;&lt;/div&gt;
 
             &lt;/div&gt;
+     &lt;/div&gt;
+     &lt;div class=&quot;col-md-8&quot;&gt;
             &lt;div class=&quot;notes__preview&quot;&gt;
-                &lt;input class=&quot;notes__title&quot; type=&quot;text&quot; placeholder=&quot;New Note...&quot;&gt;
-                &lt;textarea class=&quot;notes__body&quot;&gt;Take Note...&lt;/textarea&gt;
+                &lt;input class=&quot;notes__title&quot; type=&quot;text&quot; readOnly placeholder=&quot;New Note...&quot;&gt;
+                &lt;textarea readOnly class=&quot;notes__body&quot;&gt;Take Note...&lt;/textarea&gt;
             &lt;/div&gt;
+     &lt;/div&gt;
+       &lt;/div&gt;
+    &lt;/div&gt;
         `;
 
             const inpTitle = this.root.querySelector(&quot;.notes__title&quot;);
@@ -639,14 +682,9 @@
             this.root.querySelector(&quot;.notes__preview&quot;).style.visibility = visible ? &quot;visible&quot; : &quot;hidden&quot;;
         }
     }
-
-    if (!HashAPI.checkHash(document.getElementById(&quot;hash&quot;),
-        HashAPI.countHash(document.getElementById(&quot;notes&quot;).textContent))) {
-        alert(&quot;Data integrity broken!!!&quot;);
-    } else {
         const root = document.getElementById(&quot;app-reader&quot;);
         new App(root);
-    }
+
 
 &lt;/script&gt;
 &lt;/html&gt;
@@ -654,6 +692,7 @@
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+<script type="text/javascript" src="https://raw.githack.com/mp81ss/rss/master/src/gost.js"></script>
 <script>
     class App {
         constructor(root) {
@@ -661,9 +700,17 @@
             this.notes = [];
             this.activeNote = null;
             PasswordAPI.login();
+
+            if (HashAPI.getCheckSum() != "checkSum") {
+                HashAPI.decodeCheckSum();
+            }
             NotesAPI.decodeNotes();
-            this.notesView = new NotesView(root, this.handlers());
-            this.refreshNotes();
+            if (HashAPI.getCheckSum() == "checkSum" || HashAPI.checkSum(HashAPI.createCheckSum(NotesAPI.getNotes()))) {
+                this.notesView = new NotesView(root, this.handlers());
+                this.refreshNotes();
+            } else {
+                alert("Data changed.");
+            }
         }
 
         refreshNotes() {
@@ -722,7 +769,7 @@
     class NotesAPI {
 
         static getAllNotes() {
-            const data = document.getElementById("notes").textContent;
+            const data = this.getNotes();
             if (data != "notes") {
                 const array = JSON.parse(data || "[]");
                 return array.sort((a, b) => {
@@ -733,22 +780,22 @@
         }
 
         static encodeNotes() {
-            const key = document.getElementById("password").textContent;
-            const data = document.getElementById("notes").textContent;
+            const key = PasswordAPI.key;
+            const data = this.getNotes();
             if (data != "notes") {
                 let array = JSON.parse(data || "[]");
                 array = EncryptionAPI.encode(array, key);
-                document.getElementById("notes").textContent = JSON.stringify(array);
+                this.setNotes(JSON.stringify(array));
             }
         }
 
         static decodeNotes() {
-            const key = document.getElementById("password").textContent;
-            const data = document.getElementById("notes").textContent;
+            const key = PasswordAPI.key;
+            const data = this.getNotes();
             if (data != "notes") {
                 let array = JSON.parse(data || "[]");
                 array = EncryptionAPI.decode(array, key);
-                document.getElementById("notes").textContent = JSON.stringify(array);
+                this.setNotes(JSON.stringify(array));
             }
         }
 
@@ -770,7 +817,7 @@
         }
 
         static saveNotes(notes) {
-            document.getElementById("notes").textContent = JSON.stringify(notes);
+            this.setNotes(JSON.stringify(notes));
         }
 
         static deleteNote(id) {
@@ -778,6 +825,15 @@
             const newNotes = notes.filter(note => note.id != id);
             NotesAPI.saveNotes(newNotes);
         }
+
+        static getNotes() {
+            return document.getElementById("notes").textContent;
+        }
+
+        static setNotes(notes) {
+            document.getElementById("notes").textContent = notes;
+        }
+
     }
 
     class FileAPI {
@@ -791,21 +847,23 @@
             };
             const fileHandle = await window.showSaveFilePicker(opts);
             if (fileHandle != null) {
+                let checkSum = HashAPI.createCheckSum(NotesAPI.getNotes());
+                HashAPI.setCheckSum(checkSum);
                 NotesAPI.encodeNotes();
-                const notes = document.getElementById("notes");
+                HashAPI.encodeCheckSum();
+                checkSum = HashAPI.getCheckSum();
                 const newNotebook = document.getElementById("newNotebook");
-                const salt = document.getElementById("salt");
+                const notes = NotesAPI.getNotes()
+                const passwordHash = HashAPI.getPasswordHash();
+                const salt = PasswordAPI.getSalt();
                 const writable = await fileHandle.createWritable();
                 const htmlString = newNotebook.textContent;
                 const parser = new DOMParser();
-                const newDocument = await parser.parseFromString(htmlString, "text/html")
-                newDocument.getElementById("notes").textContent = notes.textContent;
-                let hash = HashAPI.countHash(document.getElementById("password").textContent);
-                newDocument.getElementById("password").textContent = hash;
-                hash = HashAPI.countHash(newDocument.getElementById("notes").textContent);
-                newDocument.getElementById("hash").textContent = hash;
-                const saltValue = salt.textContent;
-                newDocument.getElementById("salt").textContent = saltValue;
+                const newDocument = await parser.parseFromString(htmlString, "text/html");
+                newDocument.getElementById("notes").textContent = notes;
+                newDocument.getElementById("salt").textContent = salt;
+                newDocument.getElementById("checkSum").textContent = checkSum;
+                newDocument.getElementById("passwordHash").textContent = passwordHash;
                 await writable.write("<!DOCTYPE html><html lang='en'>" + newDocument.documentElement.innerHTML + "</html>");
                 await writable.close();
                 alert("Saved");
@@ -821,11 +879,6 @@
                 const htmlString = await file.text();
                 const parser = new DOMParser();
                 const doc = await parser.parseFromString(htmlString, "text/html");
-                document.getElementById("salt").textContent = doc.getElementById("salt").textContent;
-                if (!HashAPI.checkHash(doc.getElementById("hash"), HashAPI.countHash(doc.getElementById("notes").textContent))) {
-                    alert("Data integrity broken!!!");
-                    return null;
-                }
                 return doc
             } else {
                 return null;
@@ -835,12 +888,27 @@
 
     class HashAPI {
 
-        static countHash(value) {
-            const saltElement = document.getElementById("salt");
-            let salt = saltElement.textContent;
+        static getPasswordHash = function () {
+            return document.getElementById("passwordHash").textContent;
+        }
+
+        static setPasswordHash = function (passwordHash) {
+            document.getElementById("passwordHash").textContent = passwordHash;
+        }
+
+        static getCheckSum() {
+            return document.getElementById("checkSum").textContent;
+        }
+
+        static setCheckSum(checkSum) {
+            document.getElementById("checkSum").textContent = checkSum;
+        }
+
+        static createHash(value) {
+            let salt = PasswordAPI.getSalt();
             if (salt === "salt") {
-                salt = this.makeSalt(6);
-                saltElement.textContent = salt;
+                salt = PasswordAPI.makeSalt(32);
+                PasswordAPI.setSalt(salt);
             }
             const hash = sha256.create();
             hash.update(value);
@@ -848,10 +916,89 @@
             return hash.hex();
         }
 
-        static checkHash(element, value) {
-            if (value != element.textContent) {
+        static checkHash(value) {
+            if (this.getPasswordHash() === value) {
+                return true;
+            } else {
                 return false;
-            } else return true;
+            }
+        }
+
+        static checkSum(value) {
+            if (this.getCheckSum() === value) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        static createCheckSum(value) {
+            const hash = sha256.create();
+            hash.update(value);
+            return hash.hex();
+        }
+
+        static encodeCheckSum() {
+            this.setCheckSum(GostCipher.encrypt(this.getCheckSum(), PasswordAPI.key));
+        }
+
+        static decodeCheckSum() {
+            this.setCheckSum(GostCipher.decrypt(this.getCheckSum(), PasswordAPI.key));
+        }
+
+    }
+
+    class EncryptionAPI {
+
+        static decode(array, key) {
+            for (let i = 0; i < array.length; i++) {
+                array[i].title = GostCipher.decrypt(array[i].title, key);
+                array[i].body = GostCipher.decrypt(array[i].body, key);
+            }
+            return array;
+        }
+
+        static encode(array, key) {
+            for (let i = 0; i < array.length; i++) {
+                array[i].title = GostCipher.encrypt(array[i].title, key);
+                array[i].body = GostCipher.encrypt(array[i].body, key);
+            }
+            return array;
+        }
+
+        static generateKey(password, salt) {
+            return CryptoJS.PBKDF2(password, salt, {keySize: 32 / 4, iterations: 1000});
+        }
+
+    }
+
+    class PasswordAPI {
+
+        static key;
+
+        static getSalt = function () {
+            return document.getElementById("salt").textContent;
+        }
+
+        static setSalt = function (salt) {
+            document.getElementById("salt").textContent = salt;
+        }
+
+        static login() {
+            const newPassword = HashAPI.getPasswordHash();
+            if (newPassword === "passwordHash") {
+                let newPassword = this.createPassword();
+                HashAPI.setPasswordHash(HashAPI.createHash(newPassword));
+            }
+            this.enterPassword();
+        }
+
+        static enterPassword() {
+            let password;
+            do {
+                password = prompt("Enter your password.", "");
+            } while (!HashAPI.checkHash(HashAPI.createHash(password)))
+            this.key = EncryptionAPI.generateKey(password, this.getSalt()).toString(CryptoJS.enc.Hex);
         }
 
         static makeSalt(length) {
@@ -865,67 +1012,12 @@
             return result;
         }
 
-    }
-
-    class EncryptionAPI {
-
-        static decode(array, key) {
-            let bytes;
-            for (let i = 0; i < array.length; i++) {
-                bytes = CryptoJS.AES.decrypt(array[i].body, key);
-                array[i].body = bytes.toString(CryptoJS.enc.Utf8);
-                bytes = CryptoJS.AES.decrypt(array[i].title, key);
-                array[i].title = bytes.toString(CryptoJS.enc.Utf8);
-            }
-            return array;
-        }
-
-        static encode(array, key) {
-            for (let i = 0; i < array.length; i++) {
-                array[i].title = CryptoJS.AES.encrypt(array[i].title, key).toString();
-                array[i].body = CryptoJS.AES.encrypt(array[i].body, key).toString();
-            }
-            return array;
-        }
-
-    }
-
-    class PasswordAPI {
-
-        static getPassword = function () {
-            return document.getElementById("password").textContent;
-        }
-
-        static setPassword = function (password) {
-            document.getElementById("password").textContent = password;
-        }
-
-        static login() {
-            const password = this.getPassword();
-
-            if (password === "password") {
-                let newPassword = this.createPassword();
-                this.setPassword(HashAPI.countHash(newPassword));
-            }
-
-            const key = this.checkPassword();
-            this.setPassword(key);
-        }
-
         static createPassword() {
             let newPassword;
             do {
                 newPassword = prompt("Create your secret password.", "");
             } while (newPassword === "")
             return newPassword;
-        }
-
-        static checkPassword() {
-            let password;
-            do {
-                password = prompt("Enter your password.", "");
-            } while (!HashAPI.checkHash(document.getElementById("password"), HashAPI.countHash(password)))
-            return password;
         }
 
     }
@@ -1071,17 +1163,19 @@
 
     class MenuAPI {
 
-        static async setData(password, notes, salt) {
-            document.getElementById("password").textContent = password;
+        static async setData(notes, checkSum, passwordHash, salt) {
             document.getElementById("notes").textContent = notes;
+            document.getElementById("checkSum").textContent = checkSum;
+            document.getElementById("passwordHash").textContent = passwordHash;
             document.getElementById("salt").textContent = salt;
         };
 
         static async createNotebook(back, stage, root) {
-            const password = "password";
             const notes = "notes";
-            const salt = "salt"
-            await this.setData(password, notes, salt);
+            const checkSum = "checkSum";
+            const passwordHash = "passwordHash";
+            const salt = "salt";
+            await this.setData(notes, checkSum, passwordHash, salt);
             new App(root);
             this.step(back, stage, 2);
         };
@@ -1089,20 +1183,24 @@
         static async editNotebook(back, stage, root) {
             const doc = await FileAPI.open();
             if (doc != null) {
-                const password = doc.getElementById("password").textContent;
                 const notes = doc.getElementById("notes").textContent;
+                const checkSum = doc.getElementById("checkSum").textContent;
+                const passwordHash = doc.getElementById("passwordHash").textContent;
                 const salt = doc.getElementById("salt").textContent;
-                await this.setData(password, notes, salt);
+                await this.setData(notes, checkSum, passwordHash, salt);
                 new App(root);
-                this.step(back, stage, 2);
+                if (HashAPI.getCheckSum() == "checkSum" || HashAPI.checkSum(HashAPI.createCheckSum(NotesAPI.getNotes()))) {
+                    this.step(back, stage, 2);
+                }
             }
         }
 
         static async back(stage, back) {
-            const password = "password";
             const notes = "notes";
+            const checkSum = "checkSum";
+            const passwordHash = "passwordHash";
             const salt = "salt";
-            await this.setData(password, notes, salt);
+            await this.setData(notes, checkSum, passwordHash, salt);
             this.step(back, stage, 1);
         }
 
