@@ -450,15 +450,6 @@
                 onNoteSelect: noteId =&gt; {
                     const selectedNote = this.notes.find(note =&gt; note.id == noteId);
                     this.setActiveNote(selectedNote);
-                },
-                onNoteEdit: (title, body) =&gt; {
-                    NotesAPI.saveNote({
-                            id: this.activeNote.id,
-                            title,
-                            body
-                        }
-                    );
-                    this.refreshNotes();
                 }
             };
         }

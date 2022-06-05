@@ -1,18 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <title>Notebook Editor</title>
+<!DOCTYPE html><html lang='en'><head>
+    <meta charset="utf-8">
+        <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=<device-width/>, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <title>Notebook Reader</title>
     <style>
-        * {
+  * {
             margin: 0;
             padding: 0;
         }
 
-        html {
+        html  {
             padding-top: 20px;
-            overflow: hidden;
-            background-color: #eceeab;
+            overflow: auto;
+            background-color: #f5dddd;
+        }
+
+        .content {
+            background-color: #f5dddd;
         }
 
         .notes {
@@ -27,16 +34,20 @@
             border-right: 2px solid #575757;
             overflow-y: auto;
             padding: 1em;
-            width: 300px;
             height: 600px;
+            width: auto;
         }
 
         .notes__list-item {
+            width: auto;
+            margin-bottom: 5px;
+            border: 2px black solid;
+            border-radius: 10px;
             cursor: pointer;
         }
 
         .notes__list-item--selected {
-            background: #eeeeee;
+            background-color: #a6a6a6;
             border-radius: 7px;
             font-weight: bold;
         }
@@ -47,10 +58,12 @@
         }
 
         .notes__small-title {
+            text-align: center;
             font-size: 1.2em;
         }
 
         .notes__small-body {
+            text-align: center;
             padding: 0 10px;
         }
 
@@ -60,90 +73,98 @@
             text-align: right;
         }
 
+
         .notes__preview {
+            width: auto;
+            background: url(http://i.stack.imgur.com/ynxjD.png) repeat-y;
             display: flex;
             flex-direction: column;
             padding: 2em 3em;
             flex-grow: 1;
+            height: 600px;
         }
 
         .notes__title,
         .notes__body {
-            background-color: #eceeab;
             border: none;
             outline: none;
-            width: 100%;
 
         }
 
         .notes__title {
-            border-bottom: solid 2px black;
+            background: none;
             font-size: 3em;
             font-weight: bold;
 
         }
 
         .notes__body {
-            overflow-y: auto;
-            border-radius: 8px 0 0 8px;
-            border: solid 2px black;
+            overflow-y: hidden;
+            background: none;
             flex-grow: 1;
             font-size: 1.2em;
             line-height: 1.5;
             margin-top: 2em;
             resize: none;
-            height: 500px;
         }
 
     </style>
 </head>
 <body>
-<div id = "content" class="content">
+<div id="content" class="content">
     <div class="notes" id="app-reader"></div>
-    <div id="password" hidden>2d9bb79e9b1a374291eaa7c914433258101ca8f069f8575a50fda4a3e96e698c</div>
-    <div id="salt" hidden>salt</div>
-    <div id="notes" hidden>[{"title":"New Note","body":"Take note...","id":73148,"updated":"2022-05-09T19:10:53.101Z"},{"title":"New Note","body":"Take note...","id":750428,"updated":"2022-05-09T19:10:52.920Z"},{"title":"New Note","body":"Take note...","id":64517,"updated":"2022-05-09T19:10:52.724Z"},{"title":"New Note","body":"Take note...","id":17967,"updated":"2022-05-09T19:10:52.528Z"},{"title":"New Note","body":"Take note...","id":813090,"updated":"2022-05-09T19:10:52.333Z"},{"title":"New Note","body":"Take note...","id":698163,"updated":"2022-05-09T19:10:52.136Z"},{"title":"New Note","body":"Take note...","id":877348,"updated":"2022-05-09T19:10:51.518Z"},{"title":"New Note","body":"Take note...","id":871347,"updated":"2022-05-09T19:05:03.665Z"},{"title":"New Note","body":"Take note...","id":407108,"updated":"2022-05-09T19:05:02.422Z"},{"title":"New Note","body":"Take note...","id":185103,"updated":"2022-05-09T19:10:53.317Z"}]</div>
-    <div id="hash" hidden>0d768a6e2edc9a53f0068b0a3771c9c858fe83d712f1e109003223ebbf2c791d</div>
+            <div id="notes" hidden="">[{"title":"f3be7ac7bb28126c0db90190d77d2beb8bee02ac93915980adbc398a863b2fe793b11aa04c67e9afdd9291a7dc1c3e43","body":"620170e4dcfaf8ee7da29f0da91ece341a5f90a7a208bd193df7770e1c93552d1a18e0fa9afa5d54d58cb7105f2c33907a15e0fffa95d9c6","id":193232,"updated":"2022-06-05T13:31:20.321Z"},{"title":"3dcc945a968e0a8e65f9771d4b16abc975c81c62e478768b6d927f573b7fbd81","body":"48b6ca136d5132c06ec614a8610683dde0a6ca2ed558d031f684a4a0f05a19ff908f624faf82cc9b","id":253064,"updated":"2022-06-05T13:30:49.144Z"},{"title":"a1c6d7833ebc7538c1a3c90e5a5d108c99c4c7b8d2710532b1c8d9443ebabafc","body":"d27aa756814f9c9209941fbeabae6675da68a76f2944733e11d4dfe14d1ebe4aaa41df0e26e61a94","id":470067,"updated":"2022-06-05T13:30:48.964Z"},{"title":"33bfceba772de7261cb89fda1082e48e13d51e818d5e069c6cd66790aaed4f7d","body":"ffce1909557ba7d084e51d6fee0977b687df1936d577938434a22560356ac9ba9ff0b157d40d8136","id":759951,"updated":"2022-06-05T13:30:48.776Z"},{"title":"e3d669fce99d7bf310c0ff088705a0885bd2a9c0d85228ee60a9d742acecae78","body":"c8c93e89fc8a48b2795f73dd16780058a0d93eb45cbc8fc6e11d13d261273a6ec0f336d52ca174ec","id":578451,"updated":"2022-06-05T13:30:48.580Z"},{"title":"ae26348c90942d2ddd63a83b568fc03f162324b517d9492aad0c5071567939cf","body":"9e752409366b16fa4cddaaf7868102267e652435de674c32349b1afa97de0cb9464f4c54ecf4e720","id":682093,"updated":"2022-06-05T13:30:48.393Z"},{"title":"f3f93ba4f1ef6a167c2441e8639f75458e537b9f82d9a9c0044f59a1522de115","body":"b0a2aa78078c941f7f19494e40b9ecb340b3aa08878184d21f59b945b5e7c870289f5269c35ba9c0","id":946535,"updated":"2022-06-05T13:30:44.957Z"},{"title":"fbb88324033a448e1cdc6e52bad6011143bc5b1958a47b967cb7461843df15e7","body":"7f3109933f191f64e103b991022c157a1f2109d5071ddbae514a899ef0f5cf8e270b61b45d6373ac","id":368956,"updated":"2022-06-05T13:30:44.738Z"},{"title":"d9cbb3534465013b91023db8ec0b7b20a9e37314efaa4085696895f38a8242e0","body":"abaa8fd111656b449eb40e0755c52b9923b98fede901342d6e9b7e0aad192611539d27e7ac38586b06ec0614dd915d3e0bf3d78ff9d36f5c","id":409887,"updated":"2022-06-05T13:30:35.089Z"},{"title":"bb8b9a0f38044024eb50df795cdf09e7038eaa32bbcb5db8d33bd7330cb61927","body":"dacb06ba2d2e7d84db70394b875072461ada068ead7a7b48536f09444c8e78e322f6aeefebd86352","id":254456,"updated":"2022-06-05T13:30:25.408Z"}]</div>
+            <div id="checkSum" hidden="">e09b7439ae4bcbeec0ff0f31b6caeb33409df4395c1e9ab878fd2733024442d8989bc469f3483353a8ac2f661249c95500ce6c3679f9a5ef10a5076196c1f56ed8c3a46168109bd2d8f3676221cfa0d630c52c62ca2a67bc28f637379d4d8cd2f8973c311529ad8488a13f341d1ac4082094243ff213d53a08f2273792188509c8c79c6a8bfe0c51f0944f57d8f03fd1</div>
+    <div id="passwordHash" hidden="">caf25425d140eaf914451fa91f86e0ce98594bacaf7f69c9c22babd8e185101a</div>
+    <div id="salt" hidden="">p45koBkUvqjsqeLVB47k5IdjAOm3aUsS</div>
 </div>
-</body>
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
-<script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://raw.githack.com/mp81ss/rss/master/src/gost.js"></script>
+    <script>
     class App {
         constructor(root) {
             this.root = root;
             this.notes = [];
             this.activeNote = null;
-            this.passwordAPI = new PasswordAPI();
-            this.notesAPI = new NotesAPI();
-            this.notesView = new NotesView(root, this._handlers());
-            this._refreshNotes();
-        }
-
-        _refreshNotes() {
-            const notes = NotesAPI.getAllNotes();
-            this._setNotes(notes);
-            if (notes.length > 0) {
-                this._setActiveNote(notes[0]);
+            PasswordAPI.login();
+            HashAPI.decodeCheckSum();
+            NotesAPI.decodeNotes();
+            if (HashAPI.getCheckSum() == "checkSum" || HashAPI.checkSum(HashAPI.createCheckSum(NotesAPI.getNotes()))) {
+                this.notesView = new NotesView(root, this.handlers());
+                this.refreshNotes();
+            } else {
+                alert("Access denied.");
             }
         }
 
-        _setNotes(notes) {
+        refreshNotes() {
+            const notes = NotesAPI.getAllNotes();
+            this.setNotes(notes);
+            if (notes.length > 0) {
+                this.setActiveNote(notes[0]);
+            }
+        }
+
+        setNotes(notes) {
             this.notes = notes;
             this.notesView.updateNoteList(notes);
             this.notesView.updateNotePreviewVisibility(notes.length > 0);
         }
 
-        _setActiveNote(note) {
+        setActiveNote(note) {
             this.activeNote = note;
             this.notesView.updateActiveNote(note);
         }
 
-        _handlers() {
+        handlers() {
             return {
                 onNoteSelect: noteId => {
                     const selectedNote = this.notes.find(note => note.id == noteId);
-                    this._setActiveNote(selectedNote);
+                    this.setActiveNote(selectedNote);
                 },
                 onNoteEdit: (title, body) => {
                     NotesAPI.saveNote({
@@ -152,7 +173,7 @@
                             body
                         }
                     );
-                    this._refreshNotes();
+                    this.refreshNotes();
                 }
             };
         }
@@ -161,70 +182,87 @@
     class NotesAPI {
 
         static getAllNotes() {
-            const data = document.getElementById("notes").textContent;
-            console.log(data);
+            const data = this.getNotes();
             const array = JSON.parse(data || "[]");
-            console.log(data);
             return array.sort((a, b) => {
                 return new Date(a.updated) > new Date(b.updated) ? -1 : 1;
             });
         }
 
-        static encodeNotes() {
-            const key = document.getElementById("password").textContent;
-            const data = document.getElementById("notes").textContent;
-            if (data != "notes") {
-                let array = JSON.parse(data || "[]");
-                array = EncryptionAPI.encode(array, key);
-                document.getElementById("notes").textContent = JSON.stringify(array);
-            }
-        }
-
         static decodeNotes() {
-            const key = document.getElementById("password").textContent;
-            const data = document.getElementById("notes").textContent;
+            const key = PasswordAPI.key;
+            const data = this.getNotes();
             if (data != "notes") {
                 let array = JSON.parse(data || "[]");
                 array = EncryptionAPI.decode(array, key);
-                document.getElementById("notes").textContent = JSON.stringify(array);
+                this.setNotes(JSON.stringify(array));
             }
         }
 
-        static saveNote(noteToSave) {
-            const notes = NotesAPI.getAllNotes();
-            const existing = notes.find(note => note.id == noteToSave.id);
-
-            if (existing) {
-                existing.title = noteToSave.title;
-                existing.body = noteToSave.body;
-                existing.updated = new Date().toISOString();
-            } else {
-                noteToSave.id = Math.floor(Math.random() * 1000000);
-                noteToSave.updated = new Date().toISOString();
-                notes.push(noteToSave);
-            }
-
-            NotesAPI.saveNotes(notes);
+        static getNotes() {
+            return document.getElementById("notes").textContent;
         }
 
-        static saveNotes(notes) {
-            document.getElementById("notes").textContent = JSON.stringify(notes);
+        static setNotes(notes) {
+            document.getElementById("notes").textContent = notes;
         }
 
     }
 
     class HashAPI {
 
-        static countHash(value) {
+        static getPasswordHash = function () {
+            return document.getElementById("passwordHash").textContent;
+        }
+
+        static setPasswordHash = function (passwordHash) {
+            document.getElementById("passwordHash").textContent = passwordHash;
+        }
+
+        static getCheckSum() {
+            return document.getElementById("checkSum").textContent;
+        }
+
+        static setCheckSum(checkSum) {
+            document.getElementById("checkSum").textContent = checkSum;
+        }
+
+        static createHash(value) {
+            let salt = PasswordAPI.getSalt();
+            if (salt === "salt") {
+                salt = PasswordAPI.makeSalt(32);
+                PasswordAPI.setSalt(salt);
+            }
+            const hash = sha256.create();
+            hash.update(value);
+            hash.update(salt);
+            return hash.hex();
+        }
+
+        static checkHash(value) {
+            if (this.getPasswordHash() === value) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        static checkSum(value) {
+            if (this.getCheckSum() === value) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        static createCheckSum(value) {
             const hash = sha256.create();
             hash.update(value);
             return hash.hex();
         }
 
-        static checkHash(element, value) {
-            if (value != element.textContent) {
-                return false;
-            } else return true;
+        static decodeCheckSum() {
+            this.setCheckSum(GostCipher.decrypt(this.getCheckSum(), PasswordAPI.key));
         }
 
     }
@@ -232,38 +270,42 @@
     class EncryptionAPI {
 
         static decode(array, key) {
-            for (let i = 0; i < array.length; i++) {
-                let bytes = CryptoJS.AES.decrypt(array[i].body, key);
-                array[i].body = bytes.toString(CryptoJS.enc.Utf8);
-                bytes = CryptoJS.AES.decrypt(array[i].title, key);
-                array[i].title = bytes.toString(CryptoJS.enc.Utf8);
+            for (var i = 0; i < array.length; i++) {
+                array[i].title = GostCipher.decrypt(array[i].title, key);
+                array[i].body = GostCipher.decrypt(array[i].body, key);
             }
             return array;
+        }
+
+        static generateKey(password, salt) {
+            return CryptoJS.PBKDF2(password, salt, {keySize: 32 / 4, iterations: 1000});
         }
 
     }
 
     class PasswordAPI {
 
-        constructor() {
-            const key = this.checkPassword();
-            this.setPassword(key);
+       static key;
+
+        static getSalt = function () {
+            return document.getElementById("salt").textContent;
         }
 
-        getPassword = function () {
-            return document.getElementById("password").textContent;
+        static setSalt = function (passwordHash) {
+            document.getElementById("salt").textContent = passwordHash;
         }
 
-        setPassword = function (password) {
-            document.getElementById("password").textContent = password;
+        static login() {
+            const newPassword = HashAPI.getPasswordHash();
+            this.enterPassword();
         }
 
-        checkPassword() {
+        static enterPassword() {
             let password;
             do {
                 password = prompt("Enter your password.", "");
-            } while (!HashAPI.checkHash(document.getElementById("password"), HashAPI.countHash(password)))
-            return password;
+            } while (!HashAPI.checkHash(HashAPI.createHash(password)))
+            this.key = EncryptionAPI.generateKey(password, this.getSalt()).toString(CryptoJS.enc.Hex);
         }
     }
 
@@ -277,14 +319,22 @@
             this.onNoteSelect = onNoteSelect;
             this.onNoteEdit = onNoteEdit;
             this.root.innerHTML = `
+    <div class="container">
+    <div class="row">
+    <div class="col-md-4">
             <div class="notes__sidebar">
                 <div class="notes__list"></div>
 
             </div>
+     </div>
+     <div class="col-md-8">
             <div class="notes__preview">
-                <input class="notes__title" type="text" placeholder="New Note...">
-                <textarea class="notes__body">Take Note...</textarea>
+                <input class="notes__title" type="text" readOnly placeholder="New Note...">
+                <textarea readOnly class="notes__body">Take Note...</textarea>
             </div>
+     </div>
+       </div>
+    </div>
         `;
 
             const inpTitle = this.root.querySelector(".notes__title");
@@ -301,7 +351,7 @@
             this.updateNotePreviewVisibility(false);
         }
 
-        _createListItemHTML(id, title, body, updated) {
+        createListItemHTML(id, title, body, updated) {
             const MAX_BODY_LENGTH = 25;
 
             return `
@@ -322,7 +372,7 @@
             const notesListContainer = this.root.querySelector(".notes__list");
             notesListContainer.innerHTML = "";
             for (const note of notes) {
-                const html = this._createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
+                const html = this.createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
 
                 notesListContainer.insertAdjacentHTML("beforeend", html);
             }
@@ -347,14 +397,10 @@
             this.root.querySelector(".notes__preview").style.visibility = visible ? "visible" : "hidden";
         }
     }
-
-    if (!HashAPI.checkHash(document.getElementById("hash"),
-        HashAPI.countHash(document.getElementById("notes").textContent))) {
-        alert("Data integrity broken!!!");
-    } else {
         const root = document.getElementById("app-reader");
         new App(root);
-    }
+
 
 </script>
-</html>
+
+</body></html>
